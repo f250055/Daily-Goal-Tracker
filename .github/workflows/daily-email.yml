@@ -1,0 +1,14 @@
+name: Daily Task Summary Email
+
+on:
+  schedule:
+    - cron: '0 19 * * *'
+
+jobs:
+  send-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger summary email
+        run: |
+          curl -X POST https://your-app-url.onrender.com/admin/generate-summary \
+          -H "X-API-Key: ${{ secrets.ADMIN_API_KEY }}"
