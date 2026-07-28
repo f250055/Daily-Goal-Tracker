@@ -28,6 +28,12 @@ public class TaskController {
         Task saved = taskRepository.save(task);
         return ResponseEntity.ok(saved);
     }
+    @PatchMapping("/{id}/update")
+    public Task updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
+        Task task = taskRepository.findById(id).orElseThrow();
+        task.setCompleted(updatedTask.isCompleted());
+        return taskRepository.save(task);
+    }
     @GetMapping
     public List<Task> getTasks() {
         return taskRepository.findAll();
@@ -35,7 +41,7 @@ public class TaskController {
     @PatchMapping("/{id}")
     public Task completeTask(@PathVariable int id) {
         Task task = taskRepository.findById(id).orElseThrow();
-        task.setCompleted(true);
+        task.setCompleted(!task.isCompleted());
         return taskRepository.save(task);
     }
     @GetMapping("/{id}")

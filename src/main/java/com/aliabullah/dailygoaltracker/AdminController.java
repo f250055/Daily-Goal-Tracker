@@ -27,9 +27,9 @@ public class AdminController {
 
         for (Task task : tasks) {
             if (task.isCompleted()) {
-                summary.append("✅ ");
+                summary.append(" ✅ ");
             } else {
-                summary.append("❌ ");
+                summary.append(" ❌ ");
             }
             summary.append(task.getDescription());
             summary.append("\n");
