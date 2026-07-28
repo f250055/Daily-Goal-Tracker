@@ -1,19 +1,20 @@
 package com.aliabullah.dailygoaltracker;
 
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailySummaryScheduler {
+public class DailySummaryRunner implements CommandLineRunner {
 
     private final AdminController adminController;
 
-    public DailySummaryScheduler(AdminController adminController) {
+    public DailySummaryRunner(AdminController adminController) {
         this.adminController = adminController;
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
-    public void run() {
+    @Override
+    public void run(String... args) {
         adminController.generateDailySummary();
+        System.exit(0);
     }
 }
