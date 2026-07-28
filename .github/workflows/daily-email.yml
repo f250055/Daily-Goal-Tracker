@@ -7,8 +7,22 @@ on:
 jobs:
   send-summary:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Trigger summary email
-        run: |
-          curl -X POST https://your-app-url.onrender.com/admin/generate-summary \
-          -H "X-API-Key: ${{ secrets.ADMIN_API_KEY }}"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Summary Email Job
+        run: mvn spring-boot:run
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
