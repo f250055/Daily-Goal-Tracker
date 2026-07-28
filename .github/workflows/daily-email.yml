@@ -23,6 +23,7 @@ jobs:
       - name: Run Summary Email Job
         run: mvn spring-boot:run
         env:
+          SPRING_PROFILES_ACTIVE: github
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
