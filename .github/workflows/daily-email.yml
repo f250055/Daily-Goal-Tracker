@@ -4,8 +4,6 @@ on:
   schedule:
     - cron: '0 19 * * *'
 
-  workflow_dispatch:
-
 jobs:
   send-summary:
     runs-on: ubuntu-latest
@@ -20,12 +18,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run Summary Email Job
-        run: mvn spring-boot:run
+      - name: Run and send summary
+        run: mvn spring-boot:run -Dspring-boot.run.profiles=github
         env:
-          SPRING_PROFILES_ACTIVE: github
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
