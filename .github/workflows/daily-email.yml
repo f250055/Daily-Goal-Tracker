@@ -18,7 +18,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run and send summary
+      - name: Run Summary Email Job
         run: mvn spring-boot:run -Dspring-boot.run.profiles=github
         env:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
