@@ -16,6 +16,7 @@ public class DailySummaryRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        System.out.println("=== DailySummaryRunner is running ===");
         adminController.generateDailySummary();
         System.exit(0);
     }
