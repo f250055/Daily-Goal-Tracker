@@ -13,7 +13,7 @@ import java.time.LocalDate;
     private LocalDate taskDate;
     private boolean completed;
     public Task(){
-        taskDate=LocalDate.now();
+        taskDate = LocalDate.now(java.time.ZoneId.of("Asia/Karachi"));
     }
 
     public void setDescription(String description) {

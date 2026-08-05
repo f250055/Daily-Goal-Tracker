@@ -5,11 +5,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
+
+    private static final ZoneId PAKISTAN_ZONE = ZoneId.of("Asia/Karachi");
 
     private final TaskRepository taskRepository;
 
@@ -19,7 +22,7 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<Task> addTask(@RequestBody Task task) {
-        LocalTime now = LocalTime.now();
+        LocalTime now = LocalTime.now(PAKISTAN_ZONE);
         LocalTime cutoff = LocalTime.of(9, 0);
 
         if (now.isAfter(cutoff)) {
@@ -33,7 +36,7 @@ public class TaskController {
     public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
         Task task = taskRepository.findById(id).orElseThrow();
 
-        if (!task.getTaskDate().equals(LocalDate.now())) {
+        if (!task.getTaskDate().equals(LocalDate.now(PAKISTAN_ZONE))) {
             return ResponseEntity.status(403).build();
         }
 
@@ -41,27 +44,30 @@ public class TaskController {
         Task saved = taskRepository.save(task);
         return ResponseEntity.ok(saved);
     }
+
     @GetMapping
     public List<Task> getTasks() {
-
         return taskRepository.findAll();
     }
+
     @PatchMapping("/{id}")
     public Task completeTask(@PathVariable int id) {
         Task task = taskRepository.findById(id).orElseThrow();
         task.setCompleted(!task.isCompleted());
         return taskRepository.save(task);
     }
+
     @GetMapping("/{id}")
     public Task getTask(@PathVariable int id) {
-
         return taskRepository.findById(id).orElseThrow();
     }
+
     @GetMapping(params = "date")
     public List<Task> getTasksByDate(@RequestParam String date) {
         LocalDate parsedDate = LocalDate.parse(date);
         return taskRepository.findByTaskDate(parsedDate);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable int id) {
         taskRepository.deleteById(id);

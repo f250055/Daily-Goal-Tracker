@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+    private static final ZoneId PAKISTAN_ZONE = ZoneId.of("Asia/Karachi");
     private final EmailService emailService;
     private final TaskRepository taskRepository;
 
@@ -22,7 +24,7 @@ public class AdminController {
         this.taskRepository = taskRepository;
     }
     public void generateDailySummary() {
-        List<Task> tasks = taskRepository.findByTaskDate(LocalDate.now());
+        List<Task> tasks = taskRepository.findByTaskDate(LocalDate.now(PAKISTAN_ZONE));
         StringBuilder summary = new StringBuilder();
 
         if (tasks.isEmpty()) {
