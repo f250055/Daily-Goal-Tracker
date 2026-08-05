@@ -3,6 +3,7 @@ package com.aliabullah.dailygoaltracker;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -19,23 +20,30 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<Task> addTask(@RequestBody Task task) {
         LocalTime now = LocalTime.now();
-        LocalTime cutoff = LocalTime.of(8, 0);
+        LocalTime cutoff = LocalTime.of(9, 0);
 
         if (now.isAfter(cutoff)) {
             return ResponseEntity.status(403).build();
         }
-
         Task saved = taskRepository.save(task);
         return ResponseEntity.ok(saved);
     }
+
     @PatchMapping("/{id}/update")
-    public Task updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
+    public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
         Task task = taskRepository.findById(id).orElseThrow();
+
+        if (!task.getTaskDate().equals(LocalDate.now())) {
+            return ResponseEntity.status(403).build();
+        }
+
         task.setCompleted(updatedTask.isCompleted());
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        return ResponseEntity.ok(saved);
     }
     @GetMapping
     public List<Task> getTasks() {
+
         return taskRepository.findAll();
     }
     @PatchMapping("/{id}")
@@ -46,6 +54,17 @@ public class TaskController {
     }
     @GetMapping("/{id}")
     public Task getTask(@PathVariable int id) {
+
         return taskRepository.findById(id).orElseThrow();
+    }
+    @GetMapping(params = "date")
+    public List<Task> getTasksByDate(@RequestParam String date) {
+        LocalDate parsedDate = LocalDate.parse(date);
+        return taskRepository.findByTaskDate(parsedDate);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable int id) {
+        taskRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
