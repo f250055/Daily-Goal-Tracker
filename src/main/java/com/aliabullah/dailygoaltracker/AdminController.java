@@ -39,6 +39,10 @@ public class AdminController {
                     summary.append("❌ ");
                 }
                 summary.append(task.getDescription());
+                summary.append("\nCategory: ");
+                summary.append(task.getCategory());
+                summary.append("\nPriority: ");
+                summary.append(task.getPriority());
                 summary.append("\n");
             }
         }
