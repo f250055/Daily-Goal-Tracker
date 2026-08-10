@@ -204,12 +204,44 @@ public class TaskController {
         int pending = total - completed;
         double completionRate = total == 0 ? 0 : Math.round((completed * 10000.0) / total) / 100.0;
 
+        int currentStreak = calculateCurrentStreak();
+
         Map<String, Object> stats = new HashMap<>();
         stats.put("total", total);
         stats.put("completed", completed);
         stats.put("pending", pending);
         stats.put("completionRate", completionRate);
+        stats.put("currentStreak", currentStreak);
         return stats;
+    }
+
+    private int calculateCurrentStreak() {
+        LocalDate today = LocalDate.now(PAKISTAN_ZONE);
+        int streak = 0;
+
+        for (int i = 0; i < 365; i++) {
+            LocalDate date = today.minusDays(i);
+            List<Task> dayTasks = taskRepository.findByTaskDate(date.toString());
+
+            if (dayTasks.isEmpty()) {
+                break;
+            }
+            boolean allCompleted = true;
+            for (Task task : dayTasks) {
+                if (!task.isCompleted()) {
+                    allCompleted = false;
+                    break;
+                }
+            }
+
+            if (!allCompleted) {
+                break;
+            }
+
+            streak++;
+        }
+
+        return streak;
     }
     @GetMapping("/wall")
     public List<Map<String, Object>> getWall(@RequestParam(defaultValue = "30") int days) {

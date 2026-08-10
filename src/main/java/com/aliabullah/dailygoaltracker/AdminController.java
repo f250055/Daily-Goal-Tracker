@@ -24,13 +24,14 @@ public class AdminController {
         this.taskRepository = taskRepository;
     }
     public void generateDailySummary() {
-        List<Task> tasks = taskRepository.findByTaskDate(String.valueOf(LocalDate.now(PAKISTAN_ZONE)));
+        LocalDate summaryDate = LocalDate.now(PAKISTAN_ZONE).minusDays(1);
+        List<Task> tasks = taskRepository.findByTaskDate(String.valueOf(summaryDate));
         StringBuilder summary = new StringBuilder();
 
         if (tasks.isEmpty()) {
-            summary.append("No tasks for today.");
+            summary.append("No tasks for ").append(summaryDate).append(".");
         } else {
-            summary.append("The today progress list is : \n");
+            summary.append("Progress for ").append(summaryDate).append(":\n");
             for (Task task : tasks) {
                 if (task.isCompleted()) {
                     summary.append("✅ ");
