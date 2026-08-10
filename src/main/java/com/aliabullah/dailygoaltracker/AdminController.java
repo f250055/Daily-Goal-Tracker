@@ -24,7 +24,7 @@ public class AdminController {
         this.taskRepository = taskRepository;
     }
     public void generateDailySummary() {
-        List<Task> tasks = taskRepository.findByTaskDate(LocalDate.now(PAKISTAN_ZONE));
+        List<Task> tasks = taskRepository.findByTaskDate(String.valueOf(LocalDate.now(PAKISTAN_ZONE)));
         StringBuilder summary = new StringBuilder();
 
         if (tasks.isEmpty()) {

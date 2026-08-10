@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 
-    List<Task> findByTaskDate(LocalDate date);
+    List<Task> findByTaskDate(String date);
 
 }
