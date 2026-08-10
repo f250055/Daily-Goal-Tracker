@@ -30,7 +30,7 @@ public class AdminController {
 
         summary.append("<html><body style='font-family: Arial, sans-serif;'>");
         summary.append("<h2 style='color:#00695C;'>Daily Goal Summary</h2>");
-        summary.append("<p style='color:#555;'>").append(summaryDate).append("</p>");
+        summary.append("<p style='color:#555;'>").append("Dated: "+summaryDate).append("</p>");
 
         if (tasks.isEmpty()) {
             summary.append("<p>No tasks for this day.</p>");
