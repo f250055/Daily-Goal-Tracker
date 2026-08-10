@@ -28,24 +28,33 @@ public class AdminController {
         List<Task> tasks = taskRepository.findByTaskDate(String.valueOf(summaryDate));
         StringBuilder summary = new StringBuilder();
 
+        summary.append("<html><body style='font-family: Arial, sans-serif;'>");
+        summary.append("<h2 style='color:#00695C;'>Daily Goal Summary</h2>");
+        summary.append("<p style='color:#555;'>").append(summaryDate).append("</p>");
+
         if (tasks.isEmpty()) {
-            summary.append("No tasks for ").append(summaryDate).append(".");
+            summary.append("<p>No tasks for this day.</p>");
         } else {
-            summary.append("Progress for ").append(summaryDate).append(":\n");
+            summary.append("<table style='width:100%; border-collapse: collapse;'>");
             for (Task task : tasks) {
-                if (task.isCompleted()) {
-                    summary.append("✅ ");
-                } else {
-                    summary.append("❌ ");
-                }
-                summary.append(task.getDescription());
-                summary.append("\nCategory: ");
-                summary.append(task.getCategory());
-                summary.append("\nPriority: ");
-                summary.append(task.getPriority());
-                summary.append("\n");
+                String statusIcon = task.isCompleted() ? "✅" : "❌";
+                String priorityColor = "MEDIUM".equals(String.valueOf(task.getPriority())) ? "#FFA000"
+                        : "HIGH".equals(String.valueOf(task.getPriority())) ? "#D32F2F" : "#2E7D32";
+
+                summary.append("<tr style='border-bottom: 1px solid #eee;'>");
+                summary.append("<td style='padding:8px; font-size:16px;'>").append(statusIcon).append("</td>");
+                summary.append("<td style='padding:8px;'>");
+                summary.append("<strong>").append(task.getDescription()).append("</strong><br/>");
+                summary.append("<span style='color:").append(priorityColor).append(";'>")
+                        .append(task.getPriority()).append("</span>");
+                summary.append(" &middot; ");
+                summary.append("<span style='color:#777;'>").append(task.getCategory()).append("</span>");
+                summary.append("</td></tr>");
             }
+            summary.append("</table>");
         }
+
+        summary.append("</body></html>");
 
         emailService.sendSummaryEmail(summary.toString());
     }
