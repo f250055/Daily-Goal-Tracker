@@ -4,7 +4,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/achievements")
@@ -20,12 +23,17 @@ public class AchievementController {
     }
 
     @GetMapping
-    public List<Achievement> getAchievements() {
-        checkAndUnlockAchievements();
-        return achievementRepository.findAll();
+    public Map<String, Object> getAchievements() {
+        List<Achievement> newlyUnlocked = checkAndUnlockAchievements();
+        List<Achievement> all = achievementRepository.findAll();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("achievements", all);
+        response.put("newlyUnlocked", newlyUnlocked);
+        return response;
     }
 
-    private void checkAndUnlockAchievements() {
+    private List<Achievement> checkAndUnlockAchievements() {
 
         List<Task> allTasks = taskRepository.findAll();
         int completedCount = 0;
@@ -38,6 +46,7 @@ public class AchievementController {
         int currentStreak = calculateCurrentStreak();
 
         List<Achievement> achievements = achievementRepository.findAll();
+        List<Achievement> newlyUnlocked = new ArrayList<>();
 
         for (Achievement achievement : achievements) {
 
@@ -57,12 +66,43 @@ public class AchievementController {
                 shouldUnlock = true;
             }
 
+            if (achievement.getType() == AchievementType.CATEGORY_MILESTONE) {
+                int categoryCompleted = 0;
+                for (Task task : allTasks) {
+                    if (task.isCompleted()
+                            && task.getCategory() != null
+                            && task.getCategory().toString().equals(achievement.getTargetCategory())) {
+                        categoryCompleted++;
+                    }
+                }
+                if (categoryCompleted >= achievement.getThreshold()) {
+                    shouldUnlock = true;
+                }
+            }
+
+            if (achievement.getType() == AchievementType.PRIORITY_MILESTONE) {
+                int priorityCompleted = 0;
+                for (Task task : allTasks) {
+                    if (task.isCompleted()
+                            && task.getPriority() != null
+                            && task.getPriority().toString().equals(achievement.getTargetPriority())) {
+                        priorityCompleted++;
+                    }
+                }
+                if (priorityCompleted >= achievement.getThreshold()) {
+                    shouldUnlock = true;
+                }
+            }
+
             if (shouldUnlock) {
                 achievement.setUnlocked(true);
                 achievement.setUnlockedDate(LocalDate.now(PAKISTAN_ZONE).toString());
                 achievementRepository.save(achievement);
+                newlyUnlocked.add(achievement);
             }
         }
+
+        return newlyUnlocked;
     }
 
     private int calculateCurrentStreak() {

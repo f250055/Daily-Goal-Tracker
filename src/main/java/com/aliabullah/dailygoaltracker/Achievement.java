@@ -19,6 +19,9 @@ public class Achievement {
     private boolean unlocked;
     private String unlockedDate;
 
+    private String targetCategory;
+    private String targetPriority;
+
     public Achievement() {
     }
 
@@ -28,6 +31,12 @@ public class Achievement {
         this.type = type;
         this.threshold = threshold;
         this.unlocked = false;
+    }
+
+    public Achievement(String name, String description, AchievementType type, int threshold, String targetCategory, String targetPriority) {
+        this(name, description, type, threshold);
+        this.targetCategory = targetCategory;
+        this.targetPriority = targetPriority;
     }
 
     public int getId() {
@@ -42,19 +51,23 @@ public class Achievement {
     public AchievementType getType() {
         return type;
     }
-    public int getThreshold() {
-        return threshold;
-    }
+    public int getThreshold() { return threshold; }
     public boolean isUnlocked() {
         return unlocked;
     }
     public String getUnlockedDate() {
         return unlockedDate;
     }
+    public String getTargetCategory() { return targetCategory; }
+    public String getTargetPriority() {
+        return targetPriority;
+    }
+
     public void setUnlocked(boolean unlocked) {
         this.unlocked = unlocked;
     }
     public void setUnlockedDate(String unlockedDate) {
         this.unlockedDate = unlockedDate;
     }
+
 }

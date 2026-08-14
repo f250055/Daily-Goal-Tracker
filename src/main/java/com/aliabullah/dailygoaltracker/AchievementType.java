@@ -2,5 +2,7 @@ package com.aliabullah.dailygoaltracker;
 
 public enum AchievementType {
     STREAK,
-    MILESTONE
+    MILESTONE,
+    CATEGORY_MILESTONE,
+    PRIORITY_MILESTONE
 }
